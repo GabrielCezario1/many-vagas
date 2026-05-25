@@ -121,9 +121,7 @@ many-vagas/
 
 ## ❓ Decisões Pendentes
 
-- [ ] Quantas experiências/projetos o formulário do currículo base suporta? (fixo ou dinâmico)
-- [ ] Layout/template visual do PDF exportado
-- [ ] Nomear o arquivo exportado (automático ou usuário define?)
+> Nenhuma decisão pendente para o MVP. ✅
 
 ---
 
@@ -146,3 +144,6 @@ many-vagas/
 | 2026-05-25 | Score ATS incluído no MVP                        | Feedback objetivo da qualidade do currículo   |
 | 2026-05-25 | Análise de skill gaps incluída no MVP            | Insight de alto valor, baixo custo            |
 | 2026-05-25 | Fórmula XYZ aplicada nos bullet points           | Principal diferencial de qualidade ATS        |
+| 2026-05-25 | Campos dinâmicos no formulário (N experiências)  | Flexibilidade sem limite artificial           |
+| 2026-05-25 | Template PDF fixo (limpo e profissional)         | Simplicidade, foco no conteúdo e não no design |
+| 2026-05-25 | Nome do arquivo gerado automaticamente           | Ex: `curriculo-dev-senior-2026-05-25.pdf`     |

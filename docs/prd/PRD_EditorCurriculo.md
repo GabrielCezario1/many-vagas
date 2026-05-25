@@ -13,21 +13,29 @@ O Editor de Currículo Gerado é a tela principal de revisão e ajuste do currí
 
 O editor ocupa dois terços da tela. O terço restante, à direita, é um painel lateral permanente com o Score ATS comparativo (F-04) e a Análise de Skill Gaps (F-05). Essa configuração permite ao usuário editar o conteúdo e monitorar o impacto das mudanças no score sem perder contexto.
 
-Ao finalizar a revisão, o usuário exporta o currículo em PDF ou DOCX diretamente da mesma tela. O estado do editor é preservado na sessão, garantindo que nenhuma edição seja perdida ao navegar entre telas.
+Ao finalizar a revisão, o usuário exporta o currículo em PDF ou DOCX diretamente da mesma tela. O currículo gerado é persistido no SQLite, garantindo que fechar e reabrir o app preserve o conteúdo do editor.
+
+A tela é acessível pela rota `/editor`.
 
 ---
 
 ## Pré-requisitos
 
-### Pré-requisito — Geração concluída
+### Pré-requisito — Currículo gerado disponível
 
-O editor só é acessível após uma geração bem-sucedida (F-03). Não existe acesso direto ao editor sem um currículo gerado na sessão atual.
+O editor só é acessível quando existe um currículo gerado salvo no banco SQLite — seja da sessão atual ou de uma sessão anterior.
 
 ```gherkin
-Dado que o usuário tenta acessar a rota do editor diretamente
-E não há currículo gerado na sessão atual
-Então o sistema redireciona para a tela de Geração (F-03)
+Dado que o usuário tenta acessar /editor diretamente
+E não existe nenhum currículo gerado salvo no banco
+Então o sistema redireciona para /gerar
 E exibe a mensagem: "Gere um currículo primeiro para acessar o editor."
+
+Dado que o usuário tenta acessar /editor diretamente
+E existe um currículo gerado salvo no banco de uma sessão anterior
+Quando o editor carrega
+Então o editor é pré-carregado com o currículo salvo anteriormente
+E o score ATS e skill gaps do currículo anterior são exibidos no painel lateral
 ```
 
 ---
@@ -97,13 +105,18 @@ Então aquele item é removido da lista
 
 ---
 
-### 2.4 Persistência na sessão
+### 2.4 Persistência entre sessões
 
 ```gherkin
 Dado que o usuário editou o currículo no editor
-Quando navega para outra tela (ex: Currículo Base) e retorna ao editor
+Quando navega para outra tela (ex: /curriculo-base) e retorna para /editor
 Então todas as edições feitas estão preservadas
 E o editor exibe o mesmo conteúdo que estava antes da navegação
+
+Dado que o usuário editou o currículo no editor e fechou o app
+Quando reabre o app e navega para /editor
+Então o editor exibe o currículo com o conteúdo salvo no banco SQLite
+E as edições feitas antes de fechar estão preservadas
 ```
 
 ---
@@ -193,8 +206,8 @@ Então o mesmo fluxo ocorre para o formato DOCX
 
 | Comportamento | Descrição |
 |---|---|
-| **Acesso sem geração** | Redireciona para F-03 com mensagem explicativa |
-| **Persistência na sessão** | Edições são mantidas ao navegar entre telas na mesma sessão |
+| **Acesso sem geração** | Redireciona para `/gerar` com mensagem explicativa |
+| **Persistência entre sessões** | Currículo gerado persiste no SQLite — fechar e reabrir o app não apaga o conteúdo do editor |
 | **Score manual** | Score só recalcula ao clicar em "Atualizar Score" — nunca em tempo real |
 | **Confirmação ao sair** | Diálogo de confirmação aparece ao tentar sair sem ter exportado |
 | **Painel lateral fixo** | Score e Skill Gaps sempre visíveis durante a edição — sem colapsar |

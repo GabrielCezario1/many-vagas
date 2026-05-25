@@ -158,7 +158,122 @@ E o banco permanece no estado anterior sem perda de dados
 
 ---
 
-## Funcionalidade 5 — Script de Inicialização Unificado
+## Funcionalidade 5 — Entidades do Banco de Dados
+
+O banco SQLite contém duas tabelas principais criadas via EF Core. A estrutura é criada automaticamente na primeira execução pelo mecanismo de migrations.
+
+---
+
+### 5.1 Tabela de Currículo Base
+
+A tabela `BaseResume` armazena um único registro — o currículo base do usuário. Não existe histórico; salvar sempre substitui o registro existente.
+
+```gherkin
+Dado que o backend sobe pela primeira vez
+Quando as migrations são aplicadas
+Então a tabela BaseResume é criada no banco
+E está preparada para armazenar um único registro com todas as seções do currículo
+```
+
+---
+
+### 5.2 Tabela de Currículo Gerado
+
+A tabela `GeneratedResume` armazena um único registro — o currículo otimizado mais recente. Cada nova geração sobrescreve o registro anterior. Isso permite que o usuário feche e reabra o app e encontre o último currículo gerado no editor.
+
+```gherkin
+Dado que o backend sobe pela primeira vez
+Quando as migrations são aplicadas
+Então a tabela GeneratedResume é criada no banco
+E está preparada para armazenar um único registro com o currículo otimizado, score ATS, skill gaps e idioma usado na geração
+
+Dado que já existe um currículo gerado salvo no banco
+Quando uma nova geração é concluída com sucesso
+Então o registro anterior em GeneratedResume é sobrescrito
+E apenas o currículo mais recente é armazenado
+```
+
+---
+
+## Funcionalidade 6 — Rotas da Aplicação Angular
+
+O Angular é configurado com as rotas que mapeiam as telas do ManyVagas. A rota raiz implementa uma lógica de redirecionamento inteligente baseada no estado do banco.
+
+---
+
+### 6.1 Mapa de rotas
+
+| Rota | Tela |
+|---|---|
+| `/` | Redirecionamento automático (ver 6.2) |
+| `/curriculo-base` | F-02 — Currículo Base |
+| `/gerar` | F-03 — Geração com IA |
+| `/editor` | F-06 — Editor de Currículo |
+
+---
+
+### 6.2 Redirecionamento da rota raiz
+
+```gherkin
+Dado que o usuário abre o app e acessa a rota "/"
+E não existe nenhum currículo base salvo no banco
+Então o sistema redireciona para /curriculo-base
+
+Dado que o usuário abre o app e acessa a rota "/"
+E existe um currículo base salvo no banco
+Então o sistema redireciona para /gerar
+```
+
+---
+
+### 6.3 Acesso a rotas sem pré-requisitos atendidos
+
+```gherkin
+Dado que o usuário tenta acessar /editor diretamente
+E não existe nenhum currículo gerado salvo no banco
+Então o sistema redireciona para /gerar
+E exibe a mensagem: "Gere um currículo primeiro para acessar o editor."
+
+Dado que o usuário tenta acessar /gerar diretamente
+E o backend não está acessível
+Então a tela de geração exibe mensagem de erro de conectividade
+```
+
+---
+
+## Funcionalidade 7 — Configuração de Credenciais
+
+As credenciais do Azure OpenAI são configuradas no arquivo `appsettings.json` do backend. Esse arquivo é incluído no `.gitignore` para evitar exposição acidental das chaves no repositório.
+
+---
+
+### 7.1 Estrutura de configuração
+
+```gherkin
+Dado que o desenvolvedor acabou de clonar o repositório
+Quando tenta inicializar o backend sem configurar as credenciais
+Então o backend inicia normalmente mas a chamada à IA retorna erro de autenticação
+E o erro é claramente identificável nos logs do backend
+
+Dado que o desenvolvedor configurou o appsettings.json com as credenciais válidas
+Quando o backend sobe
+Então a integração com Azure OpenAI está disponível para uso
+```
+
+---
+
+### 7.2 Proteção do arquivo de configuração
+
+```gherkin
+Dado que o desenvolvedor faz um commit das alterações
+Quando o git avalia os arquivos modificados
+Então o arquivo appsettings.json não aparece como arquivo rastreável
+E o .gitignore contém a entrada para appsettings.json do backend
+```
+
+---
+
+## Funcionalidade 8 — Script de Inicialização Unificado
 
 Um único comando na raiz do repositório sobe simultaneamente o frontend Angular e o backend ASP.NET Core, eliminando a necessidade de abrir múltiplos terminais manualmente.
 
@@ -184,13 +299,13 @@ Então instala as dependências automaticamente antes de subir os serviços
 
 ---
 
-## Funcionalidade 6 — README com Instruções de Setup
+## Funcionalidade 9 — README com Instruções de Setup
 
 O README na raiz do repositório documenta tudo que o desenvolvedor precisa para colocar o projeto no ar a partir do zero: pré-requisitos, versões, comandos de instalação e execução.
 
 ---
 
-### 6.1 Conteúdo do README
+### 9.1 Conteúdo do README
 
 ```gherkin
 Dado que um novo desenvolvedor acessa o repositório
@@ -203,6 +318,7 @@ Então encontra as seguintes informações:
   - Comando único para rodar o projeto
   - URLs de acesso ao frontend e ao backend
   - Como verificar se o ambiente está funcionando (health check)
+  - Instrução para criar o appsettings.json com as credenciais do Azure OpenAI
 ```
 
 ---
@@ -214,6 +330,8 @@ Então encontra as seguintes informações:
 | **Dependências ausentes** | Se `node_modules` ou pacotes .NET não estiverem instalados, o script de inicialização os instala antes de subir os serviços |
 | **Porta ocupada** | Se `localhost:4200` ou `localhost:5000` já estiverem em uso, o terminal exibe mensagem de erro indicando a porta conflitante |
 | **Banco inexistente** | O banco SQLite é criado automaticamente na primeira execução — o desenvolvedor não precisa rodar nenhum comando adicional |
+| **Rotas inválidas** | Acessar qualquer rota desconhecida redireciona para `/curriculo-base` |
+| **Credenciais ausentes** | Backend sobe normalmente mas chamadas à IA falham com erro de autenticação identificável |
 | **Reinicialização** | Parar e reiniciar os serviços não apaga dados do banco nem exige reinstalação de dependências |
 
 ---

@@ -13,7 +13,7 @@ O Currículo Base é a funcionalidade central de entrada de dados do ManyVagas. 
 
 O objetivo é eliminar o retrabalho de redigitar o currículo a cada geração. O usuário cadastra nome, contato, experiências, educação, habilidades, idiomas e projetos; a partir daí, basta informar a descrição de uma nova vaga para obter um currículo customizado.
 
-A tela apresenta um formulário com seções expansíveis e campos dinâmicos, permitindo adicionar e remover itens livremente. Ao salvar, os dados são persistidos e recarregados automaticamente nas próximas visitas.
+A tela é acessível pela rota `/curriculo-base`. Ao salvar com sucesso, o usuário é automaticamente redirecionado para `/gerar`.
 
 ---
 
@@ -261,6 +261,7 @@ Quando clica em "Salvar Currículo"
 Então o botão exibe um estado de carregamento (loading) enquanto a requisição é processada
 E ao concluir, um toast de sucesso aparece no canto da tela com a mensagem: "Currículo salvo com sucesso!"
 E o toast desaparece após 3 segundos
+E o sistema redireciona automaticamente para /gerar
 ```
 
 ---
@@ -305,6 +306,7 @@ E os dados preenchidos no formulário são preservados
 | **Primeiro acesso** | Formulário completamente vazio com placeholders explicativos em todos os campos |
 | **Preservação de dados** | Ao tentar salvar com erro, nenhum dado preenchido é perdido |
 | **Campos dinâmicos** | Experiências, educação, idiomas e projetos suportam quantidade ilimitada de itens |
+| **Redirecionamento pós-salvar** | Após salvar com sucesso, o sistema redireciona automaticamente para `/gerar` |
 | **Campos de URL** | LinkedIn, GitHub e link de projeto são validados como URL apenas quando preenchidos (não obrigatórios) |
 
 ---

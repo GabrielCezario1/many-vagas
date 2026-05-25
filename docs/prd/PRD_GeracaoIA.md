@@ -13,7 +13,9 @@ A Geração com IA é o núcleo do ManyVagas. O usuário informa a descrição d
 
 O processo aplica a **fórmula XYZ** nos bullet points de experiência (*Accomplished X, measured by Y, by doing Z*), injeta as palavras-chave relevantes da vaga e adapta toda a linguagem ao idioma escolhido. O resultado é um currículo estruturado, pronto para edição e exportação.
 
-Ao concluir a geração, o sistema redireciona automaticamente para o editor (F-06), onde o usuário pode revisar e ajustar antes de exportar. Junto com o currículo otimizado, o sistema retorna a análise de skills (quais batem com a vaga e quais estão faltando), consumida pelas features F-04 e F-05.
+Ao concluir a geração, o currículo otimizado é salvo no banco SQLite (substituindo o anterior) e o sistema redireciona automaticamente para o editor (F-06). Junto com o currículo otimizado, o sistema retorna a análise de skills (quais batem com a vaga e quais estão faltando), consumida pelas features F-04 e F-05.
+
+A tela é acessível pela rota `/gerar`. As credenciais do Azure OpenAI são configuradas no `appsettings.json` do backend (não commitado no repositório).
 
 ---
 
@@ -109,9 +111,26 @@ A IA recebe o currículo base estruturado + a descrição da vaga + o idioma, e 
 ```gherkin
 Dado que o processamento pela IA foi concluído com sucesso
 Quando o backend retorna o currículo otimizado
-Então o usuário é redirecionado automaticamente para a tela do Editor (F-06)
-E o editor é pré-carregado com o currículo gerado
+Então o currículo gerado é salvo no banco SQLite (sobrescreve o registro anterior se existir)
+E o usuário é redirecionado automaticamente para a tela do Editor (/editor)
+E o editor é pré-carregado com o currículo recém-gerado
 E o score ATS (F-04) e os skill gaps (F-05) ficam disponíveis na tela do editor
+```
+
+---
+
+### 2.4 Currículo gerado anterior disponível
+
+Ao abrir a tela de geração, o sistema informa discretamente quando há um currículo gerado anteriormente disponível no editor, sem bloquear o fluxo.
+
+```gherkin
+Dado que o usuário abre o app e acessa /gerar
+E existe um currículo gerado salvo no banco de uma sessão anterior
+Quando a tela carrega
+Então exibe um aviso informativo (não bloqueante):
+"Você tem um currículo gerado anteriormente. Acesse o editor para continuar."
+E o aviso contém um link que navega para /editor
+E o usuário pode ignorar o aviso e gerar um novo normalmente
 ```
 
 ---
@@ -168,7 +187,9 @@ E o botão "Gerar Currículo" é reabilitado
 | **Botão desabilitado durante geração** | O botão "Gerar Currículo" fica desabilitado do clique até o redirecionamento ou erro |
 | **Campos bloqueados durante geração** | Campo da vaga e seletor de idioma ficam desabilitados durante o processamento |
 | **Preservação em caso de erro** | Em qualquer cenário de falha, o conteúdo do campo de vaga e a seleção de idioma são mantidos |
-| **Redirecionamento automático** | O sucesso sempre resulta em redirecionamento para F-06 — o usuário não permanece na tela de geração após o sucesso |
+| **Redirecionamento automático** | O sucesso sempre resulta em redirecionamento para `/editor` — o usuário não permanece na tela de geração após o sucesso |
+| **Persistência do gerado** | O currículo gerado é salvo no SQLite e persiste entre sessões — fechar e reabrir o app preserva o último resultado |
+| **Aviso de currículo anterior** | Quando há um gerado anterior no banco, a tela de geração exibe aviso informativo com link para `/editor` |
 | **Aviso de currículo base ausente** | Informativo e não bloqueante — o usuário decide se quer prosseguir mesmo assim |
 
 ---

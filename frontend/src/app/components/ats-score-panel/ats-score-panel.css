@@ -1,0 +1,182 @@
+/* Task 5.8 – AtsScorePanel styles with dynamic color classes */
+
+.ats-panel {
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.ats-panel--error {
+  padding: 1rem;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  background: #fff1f1;
+  text-align: center;
+}
+
+.ats-panel__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin: 0 0 0.75rem;
+}
+
+/* Side-by-side blocks */
+.ats-blocks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ats-block__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+}
+
+.ats-block__score {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  color: #1e293b;
+}
+
+/* Progress bar */
+.ats-progress {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+
+.ats-progress--sm {
+  height: 4px;
+}
+
+.ats-progress__bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* Task 5.8 – color classes for bars */
+.ats-progress__bar--red    { background: #ef4444; }
+.ats-progress__bar--orange { background: #f97316; }
+.ats-progress__bar--yellow { background: #eab308; }
+.ats-progress__bar--green  { background: #22c55e; }
+
+/* Range labels */
+.ats-block__range-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ats-label--red    { color: #ef4444; }
+.ats-label--orange { color: #f97316; }
+.ats-label--yellow { color: #ca8a04; }
+.ats-label--green  { color: #16a34a; }
+
+/* Diff badge */
+.ats-diff {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.ats-diff--positive { background: #dcfce7; color: #16a34a; }
+.ats-diff--negative { background: #fee2e2; color: #dc2626; }
+
+/* Breakdown list */
+.ats-breakdown {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ats-breakdown li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.ats-breakdown li > span:first-child {
+  width: 6rem;
+  flex-shrink: 0;
+}
+
+.ats-breakdown li > .ats-progress {
+  flex: 1;
+  margin: 0;
+}
+
+.ats-breakdown li > span:last-child {
+  width: 3rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Empty/unavailable state */
+.ats-block__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.ats-block__dash {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.ats-block__empty-msg {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.ats-block__fill-link {
+  font-size: 0.75rem;
+  color: #6366f1;
+  text-decoration: underline;
+}
+
+/* Error state */
+.ats-error-msg {
+  font-size: 0.875rem;
+  color: #b91c1c;
+  margin: 0 0 0.5rem;
+}
+
+.ats-retry-btn {
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  background: #fff;
+  color: #b91c1c;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ats-retry-btn:hover {
+  background: #fee2e2;
+}

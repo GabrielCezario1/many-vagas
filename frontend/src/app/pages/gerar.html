@@ -1,0 +1,100 @@
+<div class="gerar-page">
+  <header class="gerar-header">
+    <h1>Gerar Currículo com IA</h1>
+    <p class="subtitle">Cole a descrição da vaga abaixo e deixe a IA adaptar seu currículo automaticamente.</p>
+  </header>
+
+  <!-- Task 6.1 – Redirect message from sessionStorage -->
+  @if (redirectMessage()) {
+    <div class="alert alert-info" role="alert">
+      {{ redirectMessage() }}
+    </div>
+  }
+
+  <!-- Task 6.7 – Non-blocking warning: no base resume -->
+  @if (noBaseResume()) {
+    <div class="alert alert-warning" role="alert">
+      Você ainda não possui um currículo base salvo.
+      <a routerLink="/editor">Crie um currículo base</a> para obter melhores resultados.
+    </div>
+  }
+
+  <!-- Task 6.8 – Non-blocking warning: previous generated resume exists -->
+  @if (hasPreviousResume()) {
+    <div class="alert alert-warning" role="alert">
+      Já existe um currículo gerado salvo.
+      <a routerLink="/editor">Visualize-o no editor</a> antes de gerar um novo.
+    </div>
+  }
+
+  <!-- Task 6.5 – Error message -->
+  @if (errorMessage()) {
+    <div class="alert alert-error" role="alert">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- ─── Form ────────────────────────────────────────────────────────────── -->
+  <form class="gerar-form" (ngSubmit)="generate()" #gerarForm="ngForm">
+
+    <!-- Job Description -->
+    <div class="form-group">
+      <label for="jobDescription">Descrição da Vaga</label>
+      <textarea
+        id="jobDescription"
+        name="jobDescription"
+        rows="10"
+        placeholder="Cole aqui o texto completo da vaga..."
+        [ngModel]="jobDescription()"
+        (ngModelChange)="jobDescription.set($event)"
+        [disabled]="isLoading()"
+        required
+      ></textarea>
+    </div>
+
+    <!-- Task 6.2 – Language selection (required) -->
+    <div class="form-group">
+      <label>Idioma do Currículo</label>
+      <div class="language-options">
+        <label class="radio-option" [class.selected]="language() === 'pt-br'">
+          <input
+            type="radio"
+            name="language"
+            value="pt-br"
+            [ngModel]="language()"
+            (ngModelChange)="language.set($event); languageError.set(false)"
+            [disabled]="isLoading()"
+          />
+          Português (BR)
+        </label>
+        <label class="radio-option" [class.selected]="language() === 'en'">
+          <input
+            type="radio"
+            name="language"
+            value="en"
+            [ngModel]="language()"
+            (ngModelChange)="language.set($event); languageError.set(false)"
+            [disabled]="isLoading()"
+          />
+          English
+        </label>
+      </div>
+      @if (languageError()) {
+        <span class="field-error">Selecione o idioma do currículo.</span>
+      }
+    </div>
+
+    <!-- Submit -->
+    <button
+      type="submit"
+      class="btn-primary"
+      [disabled]="isLoading() || !jobDescription()"
+    >
+      @if (isLoading()) {
+        {{ loadingMessages[loadingMessageIndex()] }}
+      } @else {
+        Gerar Currículo
+      }
+    </button>
+  </form>
+</div>

@@ -1,0 +1,145 @@
+<!-- Task 5.7 – Error state -->
+@if (hasError()) {
+  <div class="ats-panel ats-panel--error">
+    <p class="ats-error-msg">Não foi possível calcular o score.</p>
+    <button class="ats-retry-btn" (click)="onRetry()">Tentar novamente</button>
+  </div>
+} @else {
+  <div class="ats-panel">
+    <h3 class="ats-panel__title">Score ATS</h3>
+
+    <div class="ats-blocks">
+      <!-- Bloco Antes -->
+      <div class="ats-block">
+        <h4 class="ats-block__label">Antes</h4>
+
+        <!-- Task 5.6 – null state for scoreBefore -->
+        @if (scoreBefore() === null) {
+          <div class="ats-block__empty">
+            <span class="ats-block__dash">—</span>
+            <p class="ats-block__empty-msg">Preencha o Currículo Base para ver a comparação.</p>
+            <a routerLink="/curriculo-base" class="ats-block__fill-link">Preencher agora</a>
+          </div>
+        } @else {
+          <!-- Task 5.5 – score value + progress bar -->
+          <div class="ats-block__score">{{ scoreBefore() }}/100</div>
+          <div class="ats-progress" role="progressbar"
+               [attr.aria-valuenow]="scoreBefore()"
+               aria-valuemin="0" aria-valuemax="100">
+            <div class="ats-progress__bar ats-progress__bar--{{ scoreColorBefore() }}"
+                 [style.width.%]="scoreBefore()"></div>
+          </div>
+          <span class="ats-block__range-label ats-label--{{ scoreColorBefore() }}">
+            {{ scoreLabelBefore() }}
+          </span>
+
+          <!-- Breakdown -->
+          @if (breakdownBefore()) {
+            <ul class="ats-breakdown">
+              <li>
+                <span>Keyword Match</span>
+                <div class="ats-progress ats-progress--sm">
+                  <div class="ats-progress__bar ats-progress__bar--{{ scoreColorBefore() }}"
+                       [style.width.%]="(breakdownBefore()!.keywordMatch / 40) * 100"></div>
+                </div>
+                <span>{{ breakdownBefore()!.keywordMatch | number:'1.1-1' }}/40</span>
+              </li>
+              <li>
+                <span>Verbos de Ação</span>
+                <div class="ats-progress ats-progress--sm">
+                  <div class="ats-progress__bar ats-progress__bar--{{ scoreColorBefore() }}"
+                       [style.width.%]="(breakdownBefore()!.actionVerbs / 25) * 100"></div>
+                </div>
+                <span>{{ breakdownBefore()!.actionVerbs | number:'1.1-1' }}/25</span>
+              </li>
+              <li>
+                <span>Quantificação</span>
+                <div class="ats-progress ats-progress--sm">
+                  <div class="ats-progress__bar ats-progress__bar--{{ scoreColorBefore() }}"
+                       [style.width.%]="(breakdownBefore()!.quantification / 20) * 100"></div>
+                </div>
+                <span>{{ breakdownBefore()!.quantification | number:'1.1-1' }}/20</span>
+              </li>
+              <li>
+                <span>Completude</span>
+                <div class="ats-progress ats-progress--sm">
+                  <div class="ats-progress__bar ats-progress__bar--{{ scoreColorBefore() }}"
+                       [style.width.%]="(breakdownBefore()!.completeness / 15) * 100"></div>
+                </div>
+                <span>{{ breakdownBefore()!.completeness | number:'1.1-1' }}/15</span>
+              </li>
+            </ul>
+          }
+        }
+      </div>
+
+      <!-- Bloco Depois -->
+      <div class="ats-block">
+        <h4 class="ats-block__label">Depois</h4>
+
+        @if (scoreAfter() === null) {
+          <div class="ats-block__empty">
+            <span class="ats-block__dash">—</span>
+          </div>
+        } @else {
+          <div class="ats-block__score">{{ scoreAfter() }}/100</div>
+          <div class="ats-progress" role="progressbar"
+               [attr.aria-valuenow]="scoreAfter()"
+               aria-valuemin="0" aria-valuemax="100">
+            <div class="ats-progress__bar ats-progress__bar--{{ scoreColorAfter() }}"
+                 [style.width.%]="scoreAfter()"></div>
+          </div>
+          <span class="ats-block__range-label ats-label--{{ scoreColorAfter() }}">
+            {{ scoreLabelAfter() }}
+          </span>
+
+          <!-- Task 5.5 – diff highlighted -->
+          @if (scoreDiff() !== null) {
+            <span class="ats-diff" [class.ats-diff--positive]="scoreDiff()! > 0"
+                                   [class.ats-diff--negative]="scoreDiff()! < 0">
+              {{ scoreDiff()! > 0 ? '+' : '' }}{{ scoreDiff() }} pts
+            </span>
+          }
+
+          <!-- Breakdown -->
+          @if (breakdownAfter()) {
+            <ul class="ats-breakdown">
+              <li>
+                <span>Keyword Match</span>
+                <div class="ats-progress ats-progress--sm">
+                  <div class="ats-progress__bar ats-progress__bar--{{ scoreColorAfter() }}"
+                       [style.width.%]="(breakdownAfter()!.keywordMatch / 40) * 100"></div>
+                </div>
+                <span>{{ breakdownAfter()!.keywordMatch | number:'1.1-1' }}/40</span>
+              </li>
+              <li>
+                <span>Verbos de Ação</span>
+                <div class="ats-progress ats-progress--sm">
+                  <div class="ats-progress__bar ats-progress__bar--{{ scoreColorAfter() }}"
+                       [style.width.%]="(breakdownAfter()!.actionVerbs / 25) * 100"></div>
+                </div>
+                <span>{{ breakdownAfter()!.actionVerbs | number:'1.1-1' }}/25</span>
+              </li>
+              <li>
+                <span>Quantificação</span>
+                <div class="ats-progress ats-progress--sm">
+                  <div class="ats-progress__bar ats-progress__bar--{{ scoreColorAfter() }}"
+                       [style.width.%]="(breakdownAfter()!.quantification / 20) * 100"></div>
+                </div>
+                <span>{{ breakdownAfter()!.quantification | number:'1.1-1' }}/20</span>
+              </li>
+              <li>
+                <span>Completude</span>
+                <div class="ats-progress ats-progress--sm">
+                  <div class="ats-progress__bar ats-progress__bar--{{ scoreColorAfter() }}"
+                       [style.width.%]="(breakdownAfter()!.completeness / 15) * 100"></div>
+                </div>
+                <span>{{ breakdownAfter()!.completeness | number:'1.1-1' }}/15</span>
+              </li>
+            </ul>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}

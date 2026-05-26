@@ -1,0 +1,335 @@
+<!-- Loading state -->
+@if (loading()) {
+  <div class="page-loading">Carregando currículo...</div>
+}
+
+<!-- Error state -->
+@if (loadError() && !loading()) {
+  <div class="load-error">
+    <p>Não foi possível carregar o currículo gerado. Verifique se o backend está rodando.</p>
+    <button class="btn btn--secondary" (click)="onRetry()">Tentar novamente</button>
+  </div>
+}
+
+@if (!loading() && !loadError()) {
+  <!-- Top bar -->
+  <div class="editor-topbar">
+    <button class="btn btn--secondary" (click)="onGerarNovoCurriculo()">← Gerar Novo Currículo</button>
+    <div class="editor-topbar__actions">
+      <button class="btn btn--outline" (click)="onExportPdf()" [disabled]="isExportingPdf() || isExportingDocx()">
+        @if (isExportingPdf()) {
+          <span class="spinner"></span> Exportando...
+        } @else {
+          Exportar PDF
+        }
+      </button>
+      <button class="btn btn--outline" (click)="onExportDocx()" [disabled]="isExportingPdf() || isExportingDocx()">
+        @if (isExportingDocx()) {
+          <span class="spinner"></span> Exportando...
+        } @else {
+          Exportar DOCX
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Main layout -->
+  <div class="editor-layout">
+
+    <!-- Editor main -->
+    <div class="editor-main">
+      <form [formGroup]="form" novalidate>
+
+        <!-- Dados Pessoais -->
+        <section class="form-section">
+          <h2 class="form-section__title">Dados Pessoais</h2>
+          <div class="field">
+            <label for="nome">Nome completo</label>
+            <input id="nome" type="text" formControlName="nome" />
+          </div>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" formControlName="email" />
+          </div>
+          <div class="field">
+            <label for="telefone">Telefone</label>
+            <input id="telefone" type="tel" formControlName="telefone" />
+          </div>
+          <div class="field">
+            <label for="cidade">Cidade</label>
+            <input id="cidade" type="text" formControlName="cidade" />
+          </div>
+          <div class="field">
+            <label for="linkedin">LinkedIn</label>
+            <input id="linkedin" type="url" formControlName="linkedin" />
+          </div>
+          <div class="field">
+            <label for="github">GitHub</label>
+            <input id="github" type="url" formControlName="github" />
+          </div>
+        </section>
+
+        <!-- Resumo Profissional -->
+        <section class="form-section">
+          <h2 class="form-section__title">Resumo Profissional</h2>
+          <div class="field">
+            <label for="resumo">Resumo</label>
+            <textarea id="resumo" formControlName="resumo" rows="4"></textarea>
+          </div>
+        </section>
+
+        <!-- Experiências -->
+        <section class="form-section">
+          <div class="section-header">
+            <h2 class="form-section__title">Experiências Profissionais</h2>
+            <button type="button" class="btn btn--secondary" (click)="addExperiencia()">+ Adicionar</button>
+          </div>
+
+          @for (exp of experiencias.controls; track $index; let expIdx = $index) {
+            <div class="array-item" [formGroup]="$any(exp)">
+              <div class="array-item__header">
+                <span class="array-item__label">Experiência {{ expIdx + 1 }}</span>
+                <button type="button" class="btn btn--danger btn--sm" (click)="removeExperiencia(expIdx)">Remover</button>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label>Empresa</label>
+                  <input type="text" formControlName="empresa" />
+                </div>
+                <div class="field">
+                  <label>Cargo</label>
+                  <input type="text" formControlName="cargo" />
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label>Início</label>
+                  <input type="month" formControlName="dataInicio" />
+                </div>
+                <div class="field">
+                  <label>Fim</label>
+                  <input type="month" formControlName="dataFim" />
+                </div>
+              </div>
+
+              <div class="field field--checkbox">
+                <label>
+                  <input type="checkbox" formControlName="atualmente" (change)="toggleAtualmente(expIdx)" />
+                  Trabalho aqui atualmente
+                </label>
+              </div>
+
+              <div class="bullets-section">
+                <label>Atividades / Conquistas</label>
+                @for (bullet of getBullets(expIdx).controls; track $index; let bulletIdx = $index) {
+                  <div class="bullet-row">
+                    <input type="text" [formControl]="$any(bullet)" />
+                    @if (getBullets(expIdx).length > 1) {
+                      <button type="button" class="btn btn--icon" (click)="removeBullet(expIdx, bulletIdx)">✕</button>
+                    }
+                  </div>
+                }
+                <button type="button" class="btn btn--link" (click)="addBullet(expIdx)">+ Adicionar tópico</button>
+              </div>
+            </div>
+          }
+        </section>
+
+        <!-- Educação -->
+        <section class="form-section">
+          <div class="section-header">
+            <h2 class="form-section__title">Educação</h2>
+            <button type="button" class="btn btn--secondary" (click)="addEducacao()">+ Adicionar</button>
+          </div>
+
+          @for (edu of educacao.controls; track $index) {
+            <div class="array-item" [formGroup]="$any(edu)">
+              <div class="array-item__header">
+                <span class="array-item__label">Formação {{ $index + 1 }}</span>
+                <button type="button" class="btn btn--danger btn--sm" (click)="removeEducacao($index)">Remover</button>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label>Instituição</label>
+                  <input type="text" formControlName="instituicao" />
+                </div>
+                <div class="field">
+                  <label>Curso</label>
+                  <input type="text" formControlName="curso" />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label>Grau</label>
+                  <input type="text" formControlName="grau" />
+                </div>
+                <div class="field">
+                  <label>Início</label>
+                  <input type="month" formControlName="dataInicio" />
+                </div>
+                <div class="field">
+                  <label>Fim</label>
+                  <input type="month" formControlName="dataFim" />
+                </div>
+              </div>
+            </div>
+          }
+        </section>
+
+        <!-- Habilidades Técnicas -->
+        <section class="form-section">
+          <h2 class="form-section__title">Habilidades Técnicas</h2>
+          <div class="skill-input-row">
+            <input
+              type="text"
+              [value]="skillInput()"
+              (input)="skillInput.set($any($event.target).value)"
+              (keydown)="addSkillOnEnter($event)"
+              placeholder="Ex: Angular, TypeScript..."
+            />
+            <button type="button" class="btn btn--secondary" (click)="addSkill()">Adicionar</button>
+          </div>
+          <div class="tags">
+            @for (skill of habilidades; track $index) {
+              <span class="tag">
+                {{ skill }}
+                <button type="button" class="tag__remove" (click)="removeSkill($index)" title="Remover">✕</button>
+              </span>
+            }
+          </div>
+        </section>
+
+        <!-- Idiomas -->
+        <section class="form-section">
+          <div class="section-header">
+            <h2 class="form-section__title">Idiomas</h2>
+            <button type="button" class="btn btn--secondary" (click)="addIdioma()">+ Adicionar</button>
+          </div>
+
+          @for (id of idiomas.controls; track $index) {
+            <div class="array-item array-item--inline" [formGroup]="$any(id)">
+              <div class="field">
+                <label>Idioma</label>
+                <input type="text" formControlName="idioma" />
+              </div>
+              <div class="field">
+                <label>Nível</label>
+                <select formControlName="nivel">
+                  <option value="">Selecione...</option>
+                  <option value="Básico">Básico</option>
+                  <option value="Intermediário">Intermediário</option>
+                  <option value="Avançado">Avançado</option>
+                  <option value="Fluente">Fluente</option>
+                  <option value="Nativo">Nativo</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn--danger btn--sm array-item--inline__remove" (click)="removeIdioma($index)">Remover</button>
+            </div>
+          }
+        </section>
+
+        <!-- Projetos -->
+        <section class="form-section">
+          <div class="section-header">
+            <h2 class="form-section__title">Projetos</h2>
+            <button type="button" class="btn btn--secondary" (click)="addProjeto()">+ Adicionar</button>
+          </div>
+
+          @for (proj of projetos.controls; track $index; let projIdx = $index) {
+            <div class="array-item" [formGroup]="$any(proj)">
+              <div class="array-item__header">
+                <span class="array-item__label">Projeto {{ projIdx + 1 }}</span>
+                <button type="button" class="btn btn--danger btn--sm" (click)="removeProjeto(projIdx)">Remover</button>
+              </div>
+              <div class="field">
+                <label>Nome do projeto</label>
+                <input type="text" formControlName="nome" />
+              </div>
+              <div class="field">
+                <label>Descrição</label>
+                <textarea formControlName="descricao" rows="2"></textarea>
+              </div>
+              <div class="field">
+                <label>Link</label>
+                <input type="url" formControlName="link" />
+              </div>
+              <div class="field">
+                <label>Tecnologias</label>
+                <div class="skill-input-row">
+                  <input
+                    type="text"
+                    [value]="projetoTechInputs[projIdx]"
+                    (input)="projetoTechInputs[projIdx] = $any($event.target).value"
+                    (keydown.enter)="$event.preventDefault(); addTecnologia(projIdx)"
+                    placeholder="Ex: Angular, Node.js..."
+                  />
+                  <button type="button" class="btn btn--secondary" (click)="addTecnologia(projIdx)">Adicionar</button>
+                </div>
+                <div class="tags">
+                  @for (tech of $any(proj).get('tecnologias').value; track tech; let techIdx = $index) {
+                    <span class="tag">
+                      {{ tech }}
+                      <button type="button" class="tag__remove" (click)="removeTecnologia(projIdx, techIdx)" title="Remover">✕</button>
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </section>
+
+      </form>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="editor-sidebar">
+      <app-ats-score-panel
+        [scoreBefore]="scoreBefore()"
+        [scoreAfter]="scoreAfter()"
+        [breakdownBefore]="breakdownBefore()"
+        [breakdownAfter]="breakdownAfter()"
+        [jobDescription]="jobDescription()"
+        [hasError]="hasError()"
+        (retry)="onRetry()"
+      />
+      <app-skill-gaps-panel
+        [matchedSkills]="matchedSkills()"
+        [missingSkills]="missingSkills()"
+        [hasBaseResume]="hasBaseResume()"
+      />
+      <div class="editor-score-actions">
+        <button class="editor-save-btn" (click)="save()" [disabled]="isSaving()">
+          {{ isSaving() ? 'Calculando…' : 'Atualizar Score' }}
+        </button>
+        @if (saveMessage()) {
+          <span class="editor-save-msg">{{ saveMessage() }}</span>
+        }
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Confirmation dialog -->
+  @if (showConfirmDialog()) {
+    <div class="dialog-overlay" (click)="cancelLeave()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <h3 class="dialog__title">Gerar Novo Currículo?</h3>
+        <p class="dialog__body">Você ainda não exportou o currículo atual. Ao gerar um novo, o currículo editado pode ser sobrescrito. Deseja continuar?</p>
+        <div class="dialog__actions">
+          <button class="btn btn--secondary" (click)="cancelLeave()">Cancelar</button>
+          <button class="btn btn--primary" (click)="confirmLeave()">Continuar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- F-07 Toast notification -->
+  @if (toastMessage()) {
+    <div class="toast" [class.toast--success]="toastType() === 'success'" [class.toast--error]="toastType() === 'error'">
+      {{ toastMessage() }}
+    </div>
+  }
+}
+

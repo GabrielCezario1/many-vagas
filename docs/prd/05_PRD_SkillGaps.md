@@ -7,6 +7,9 @@
 
 ---
 
+> [!WARNING]
+> **Sem Testes:** Este projeto não implementa testes automatizados de nenhum tipo (unitários, integração, e2e, spec). Nenhuma task, seção ou artefato de testes deve ser criado ou planejado para este módulo.
+
 ## Visão Geral
 
 A Análise de Skill Gaps exibe ao usuário, de forma visual e imediata, quais competências exigidas pela vaga ele já possui e quais ainda faltam no seu perfil. Essa comparação é o principal insight de autoconhecimento do ManyVagas — permite que o usuário entenda suas lacunas antes mesmo de enviar o currículo.

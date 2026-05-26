@@ -7,6 +7,9 @@
 
 ---
 
+> [!WARNING]
+> **Sem Testes:** Este projeto não implementa testes automatizados de nenhum tipo (unitários, integração, e2e, spec). Nenhuma task, seção ou artefato de testes deve ser criado ou planejado para este módulo.
+
 ## Visão Geral
 
 O Editor de Currículo Gerado é a tela principal de revisão e ajuste do currículo otimizado pela IA. Após a geração (F-03), o usuário é redirecionado automaticamente para esta tela, onde encontra o currículo pré-carregado em seções estruturadas editáveis — as mesmas seções do Currículo Base (F-02).

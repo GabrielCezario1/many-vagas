@@ -1,0 +1,33 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Angular build output
+frontend/dist/
+frontend/.angular/
+
+# .NET build output
+backend/bin/
+backend/obj/
+
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# ASP.NET Core secrets / credentials (never commit these)
+backend/**/appsettings.json
+backend/**/appsettings.*.json
+!backend/**/appsettings.example.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.vs/
+*.user
+*.suo

@@ -1,0 +1,55 @@
+<div class="skill-gaps-panel">
+  <h3 class="skill-gaps-panel__title">Skill Gaps</h3>
+
+  <!-- Task 2.1 – both lists empty: no skills identified in the job -->
+  @if (noSkillsIdentified()) {
+    <p class="skill-gaps-panel__no-skills">Nenhuma skill identificada na vaga.</p>
+  } @else {
+    <p class="skill-gaps-panel__summary">{{ summaryText() }}</p>
+
+    <!-- Você já tem -->
+    <div class="skill-gaps-panel__section">
+      <h4 class="skill-gaps-panel__section-title">Você já tem:</h4>
+
+      <!-- Task 2.4 – no base resume: show info message + link -->
+      @if (hasBaseResume() === false) {
+        <p class="skill-gaps-panel__info-msg">
+          Preencha o Currículo Base para ver as skills que você já tem.
+        </p>
+        <a routerLink="/curriculo-base" class="skill-gaps-panel__fill-link">Preencher agora</a>
+
+      <!-- Task 2.2 – base resume present but no skills matched -->
+      } @else if (matchedSkills().length === 0 && hasBaseResume() === true) {
+        <p class="skill-gaps-panel__empty-msg">
+          Nenhuma skill do seu currículo foi identificada na vaga.
+        </p>
+
+      <!-- matched skills as green tags -->
+      } @else if (matchedSkills().length > 0) {
+        <div class="skill-gaps-panel__tags">
+          @for (skill of matchedSkills(); track skill) {
+            <span class="skill-gaps-panel__tag skill-gaps-panel__tag--matched">✅ {{ skill }}</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Faltam -->
+    <div class="skill-gaps-panel__section">
+      <h4 class="skill-gaps-panel__section-title">Faltam:</h4>
+
+      <!-- Task 2.3 – no missing skills: user has everything -->
+      @if (missingSkills().length === 0) {
+        <p class="skill-gaps-panel__all-good">Você tem todas as skills identificadas na vaga! 🎉</p>
+
+      <!-- missing skills as red tags -->
+      } @else {
+        <div class="skill-gaps-panel__tags">
+          @for (skill of missingSkills(); track skill) {
+            <span class="skill-gaps-panel__tag skill-gaps-panel__tag--missing">❌ {{ skill }}</span>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

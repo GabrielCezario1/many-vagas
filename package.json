@@ -1,0 +1,14 @@
+{
+  "name": "many-vagas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ManyVagas — monorepo with Angular frontend and ASP.NET Core backend",
+  "scripts": {
+    "start": "concurrently --names \"FE,BE\" --prefix-colors \"cyan,green\" \"npm --prefix frontend start\" \"dotnet run --project backend\"",
+    "setup": "npm install && npm --prefix frontend install",
+    "check:prereqs": "node scripts/check-prereqs.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

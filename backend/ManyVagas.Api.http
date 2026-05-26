@@ -1,0 +1,102 @@
+@ManyVagas.Api_HostAddress = http://localhost:5000
+
+# ─── Task 7.1 – GET /api/base-resume/exists ──────────────────────────────────
+GET {{ManyVagas.Api_HostAddress}}/api/base-resume/exists
+Accept: application/json
+
+###
+
+# ─── Task 7.2 – POST /api/base-resume (seed base resume) ────────────────────
+POST {{ManyVagas.Api_HostAddress}}/api/base-resume
+Content-Type: application/json
+
+{
+  "nome": "Gabriel Cézario",
+  "email": "gabriel@example.com",
+  "telefone": "+55 11 99999-0000",
+  "cidade": "São Paulo, SP",
+  "linkedIn": "https://linkedin.com/in/gabriel",
+  "gitHub": "https://github.com/gabriel",
+  "resumo": "Desenvolvedor full-stack com experiência em .NET e Angular.",
+  "experiencias": [
+    {
+      "empresa": "Empresa X",
+      "cargo": "Desenvolvedor Sênior",
+      "dataInicio": "2021-01",
+      "dataFim": null,
+      "atualmente": true,
+      "bullets": [
+        "Desenvolvi APIs REST em .NET 8",
+        "Migrei sistema legado para microsserviços"
+      ]
+    }
+  ],
+  "educacao": [
+    {
+      "instituicao": "Universidade Y",
+      "curso": "Ciência da Computação",
+      "grau": "Bacharel",
+      "dataInicio": "2015-02",
+      "dataFim": "2019-12"
+    }
+  ],
+  "habilidades": ["C#", ".NET", "Angular", "TypeScript", "SQL Server", "Docker"],
+  "idiomas": [
+    { "idioma": "Português", "nivel": "Nativo" },
+    { "idioma": "Inglês", "nivel": "Avançado" }
+  ],
+  "projetos": []
+}
+
+###
+
+# ─── Task 7.3 – POST /api/resume/generate (PT-BR) ────────────────────────────
+POST {{ManyVagas.Api_HostAddress}}/api/resume/generate
+Content-Type: application/json
+
+{
+  "jobDescription": "Procuramos Desenvolvedor .NET Sênior com experiência em microsserviços, Docker, Kubernetes e Azure. Desejável experiência com Angular e CI/CD.",
+  "language": "pt-br"
+}
+
+###
+
+# ─── Task 7.4 – POST /api/resume/generate (English) ─────────────────────────
+POST {{ManyVagas.Api_HostAddress}}/api/resume/generate
+Content-Type: application/json
+
+{
+  "jobDescription": "We are looking for a Senior .NET Developer with experience in microservices, Docker, Kubernetes, and Azure. Angular and CI/CD experience is a plus.",
+  "language": "en"
+}
+
+###
+
+# ─── Task 7.5 – POST /api/resume/generate (empty job description) ────────────
+POST {{ManyVagas.Api_HostAddress}}/api/resume/generate
+Content-Type: application/json
+
+{
+  "jobDescription": "",
+  "language": "pt-br"
+}
+
+###
+
+# ─── Task 7.6 – GET /api/generated-resume/exists ─────────────────────────────
+GET {{ManyVagas.Api_HostAddress}}/api/generated-resume/exists
+Accept: application/json
+
+###
+
+# ─── Task 7.7 – GET /api/generated-resume ────────────────────────────────────
+GET {{ManyVagas.Api_HostAddress}}/api/generated-resume
+Accept: application/json
+
+###
+
+# ─── Task 7.8 – GET /api/base-resume ─────────────────────────────────────────
+GET {{ManyVagas.Api_HostAddress}}/api/base-resume
+Accept: application/json
+
+###
